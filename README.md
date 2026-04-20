@@ -134,9 +134,6 @@ Results are saved to `E:/quant/outputs/` as per-model JSON files and summary JSO
 |---|---|
 | spaCy ru_core_news_sm | NER |
 | spaCy ru_core_news_lg | NER |
-| LaBSE-NEREL (HuggingFace) | NER |
-| TextBlob | SA |
-| VADER | SA |
 | rubert-base-cased-sentiment | SA |
 
 ---
