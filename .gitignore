@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Models (large binary files — don't commit)
+models/
+*.gguf
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# Data
+data/
+*.csv
+*.tsv
+
+# Outputs
+outputs/
+*.json
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
