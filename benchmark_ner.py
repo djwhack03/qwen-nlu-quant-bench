@@ -29,7 +29,6 @@ MODELS = [
     # ── classical baselines ──────────────────────────────────────────────
     {"label": "spaCy-ru_core_news_sm", "type": "spacy",  "path": "", "model_name": "ru_core_news_sm"},
     {"label": "spaCy-ru_core_news_lg", "type": "spacy",  "path": "", "model_name": "ru_core_news_lg"},
-    {"label": "HF-NER-LaBSE-NEREL",    "type": "hf_ner", "path": "", "model_name": "surdan/LaBSE_ner_nerel"},
 
     # ── base FP16 ────────────────────────────────────────────────────────
     {"label": "Qwen2-1.5B-Instruct",     "type": "hf",      "path": BASE_MODEL_PATH, "bnb_bits": 0},
