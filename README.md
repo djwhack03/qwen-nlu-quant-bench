@@ -31,7 +31,6 @@ The core research question: *does quantized LLM zero-shot inference approach or 
 | Qwen2-1.5B OAQ 4bit | 0.554 | 0.734 | 0.631 |
 | Qwen2-1.5B bnb-4bit | 0.991 | 0.443 | 0.612 |
 | Qwen2-1.5B HQQ 4bit | 0.469 | 0.721 | 0.569 |
-| HF-NER LaBSE-NEREL | 0.987 | 0.303 | 0.464 |
 
 **Key finding:** INT8 quantization (TorchAO) loses only 1.5% F1 vs FP16. INT4 methods drop 13–30%. No quantized LLM variant beats spaCy-lg in zero-shot mode.
 
