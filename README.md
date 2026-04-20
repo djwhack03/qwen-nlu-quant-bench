@@ -2,7 +2,7 @@
 
 A reproducible framework for evaluating LLM quantization methods on classical NLU tasks (NER and Sentiment Analysis).
 
-Built as part of a bachelor's/master's thesis on applying adaptive LLM distillation to classical NLP problems.
+Built as part of a bachelor's thesis on applying adaptive LLM distillation to classical NLP problems.
 
 ---
 
@@ -171,7 +171,7 @@ If you use this framework, please cite:
 @misc{qwen-nlu-quant-bench,
   author = {djwhack03},
   title  = {qwen-nlu-quant-bench: LLM Quantization Benchmark for NLU Tasks},
-  year   = {2025},
+  year   = {2026},
   url    = {https://github.com/djwhack03/qwen-nlu-quant-bench}
 }
 ```
