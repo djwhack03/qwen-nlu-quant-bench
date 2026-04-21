@@ -38,6 +38,19 @@ The core research question: *does quantized LLM zero-shot inference approach or 
 
 ---
 
+## Results (SA · RuSentiment · 500 samples)
+
+| Model | Accuracy | F1_macro |
+|---|---|---|
+| HF-rubert-sentiment | 0.79 | 0.783 |
+| Qwen2-1.5B FP16 | 0.726 | 0.722 |
+| Qwen2-1.5B GGUF Q4_K_M | 0.654 | 0.656 |
+| Qwen2-1.5B bnb-4bit | 0.632 | 0.635 |
+| Qwen2-1.5B Quanto int4 | 0.602 | 0.604 |
+| Qwen2-1.5B HQQ 4bit | 0.582 | 0.502 |
+
+---
+
 ## Repository structure
 
 ```
