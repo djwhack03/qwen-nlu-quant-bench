@@ -47,17 +47,16 @@ qwen-nlu-quant-bench/
 │   ├── __init__.py
 |   ├── backends.py             # HF / GGUF / OAQ / Classical backends
 │   ├── config.py               # all paths, model lists, settings
-│   ├── prompts.py              # NER and SA prompts
-│   ├── postprocess.py          # filtering, normalization, soft matching
 │   ├── datasets.py             # WikiNER, RuSentiment, SST-2 loaders
 │   ├── evaluate.py             # F1, accuracy, macro-F1, model size
 │   ├── inference.py            # generate_persons, predict_sentiment
+│   ├── postprocess.py          # filtering, normalization, soft matching
+│   ├── prompts.py              # NER and SA prompts
+│   └── run_all.py              # unified entry point
 │   ├── run_ner.py              # NER benchmark loop
 │   ├── run_sentiment.py        # SA benchmark loop
-│   └── run_all.py              # unified entry point
 │── results/                    # framework outputs
 ├── quantize_oaq.py             # OAQ quantization script
-├── convert_ft_to_gguf.py       # merge + convert fine-tuned model to GGUF
 ├── requirements.txt
 └── README.md
 ```
