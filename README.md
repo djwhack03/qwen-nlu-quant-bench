@@ -25,6 +25,8 @@ The core research question: *does quantized LLM zero-shot inference approach or 
 | spaCy-ru_core_news_sm | 0.832 | 0.873 | 0.852 |
 | Qwen2-1.5B FP16 | 0.912 | 0.725 | 0.808 |
 | Qwen2-1.5B TorchAO int8 | 0.869 | 0.734 | 0.796 |
+| Qwen2-1.5B bnb-8bit | 0.856 | 0.730 | 0.788 |
+| Qwen2-1.5B Quanto int8 | 0.851 | 0.725 | 0.783 |
 | Qwen2-1.5B GGUF Q4_K_M | 0.701 | 0.701 | 0.701 |
 | Qwen2-1.5B Quanto int4 | 0.636 | 0.689 | 0.661 |
 | Qwen2-1.5B AWQ 4bit | 0.590 | 0.738 | 0.656 |
@@ -43,8 +45,8 @@ qwen-nlu-quant-bench/
 │
 ├── framework/                  # main package
 │   ├── __init__.py
+|   ├── backends.py             # HF / GGUF / OAQ / Classical backends
 │   ├── config.py               # all paths, model lists, settings
-│   ├── backends.py             # HF / GGUF / OAQ / Classical backends
 │   ├── prompts.py              # NER and SA prompts
 │   ├── postprocess.py          # filtering, normalization, soft matching
 │   ├── datasets.py             # WikiNER, RuSentiment, SST-2 loaders
@@ -55,7 +57,6 @@ qwen-nlu-quant-bench/
 │   └── run_all.py              # unified entry point
 │
 ├── quantize_oaq.py             # OAQ quantization script
-├── finetune_ner.py             # QLoRA fine-tuning script (experimental)
 ├── convert_ft_to_gguf.py       # merge + convert fine-tuned model to GGUF
 ├── requirements.txt
 └── README.md
