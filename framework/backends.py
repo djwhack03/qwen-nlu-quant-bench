@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 
 from framework.config import DEVICE, RANDOM_SEED, MODELS_DIR
+from framework.prompts import SYSTEM_PROMPT, SENTIMENT_PROMPT
 
 
 # ==========================
@@ -18,6 +19,10 @@ def _model_dtype(model) -> torch.dtype:
 
 # ==========================
 # OAQ LINEAR LAYER
+# FIX: dequantize() checks device consistency before reusing cache.
+# If the module was moved to a different device after caching (e.g.
+# pre-warmed on CPU then moved to CUDA), the stale cache is dropped and
+# recomputed once on the correct device. All subsequent calls are cache hits.
 # ==========================
 class OAQLinear(nn.Module):
     def __init__(self, quantized_weight, scales, outlier_weight,
@@ -37,6 +42,12 @@ class OAQLinear(nn.Module):
         self._dequantized_cache = None
 
     def dequantize(self) -> torch.Tensor:
+        # Invalidate cache if module has moved to a different device since
+        # the cache was populated (registered buffers move with .to(device),
+        # but _dequantized_cache is a plain attribute and stays behind).
+        if self._dequantized_cache is not None:
+            if self._dequantized_cache.device != self.quantized_weight.device:
+                self._dequantized_cache = None  # stale — recompute
         if self._dequantized_cache is not None:
             return self._dequantized_cache
         w_q        = self.quantized_weight.float()
@@ -283,6 +294,10 @@ class GGUFBackend:
 
 # ==========================
 # OAQ BACKEND
+# FIX: Model is moved to CUDA *before* pre-warming so the dequantization
+# cache is populated on the correct device. The pre-warm uses a real
+# tokenized prompt (not a dummy zeros tensor) to exercise the full
+# generate() path and fill every OAQLinear cache entry.
 # ==========================
 class OAQBackend:
     def __init__(self, path: str):
@@ -320,16 +335,29 @@ class OAQBackend:
         state_dict = torch.load(state_dict_path, map_location="cpu")
         base_model.load_state_dict(state_dict)
 
+        # Move to CUDA BEFORE pre-warming so the dequantization cache is
+        # filled on the correct device. If we warm first and move second,
+        # every subsequent generate() call hits the device-mismatch branch
+        # in dequantize() and recomputes the full weight matrix per token.
         if DEVICE == "cuda":
             base_model = base_model.to(DEVICE)
         base_model.eval()
         self.model = base_model
 
+        # Pre-warm with a real tokenized prompt so every OAQLinear layer's
+        # cache is populated (a dummy zeros tensor skips most of the graph).
         print("    Pre-warming OAQ dequantization cache...")
-        dummy = torch.zeros(1, 1, dtype=torch.long).to(DEVICE)
+        warmup_messages = [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user",   "content": "Ленин и Троцкий выступили в Петрограде ."},
+        ]
+        warmup_prompt  = self.tokenizer.apply_chat_template(
+            warmup_messages, tokenize=False, add_generation_prompt=True)
+        warmup_inputs  = self.tokenizer(
+            warmup_prompt, return_tensors="pt").to(DEVICE)
         with torch.no_grad():
-            self.model(dummy)
-        print("    Cache ready.")
+            self.model.generate(**warmup_inputs, max_new_tokens=30)
+        print("    Cache ready — inference will be fast.")
 
     def generate(self, messages: list, max_new_tokens: int = 400,
                  do_sample: bool = False,

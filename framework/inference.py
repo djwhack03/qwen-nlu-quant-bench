@@ -58,16 +58,35 @@ def generate_persons_classical(backend: ClassicalNERBackend,
 
 # ==========================
 # SENTIMENT — LLM PATH
+# FIX: strip label prefixes before keyword matching, add Russian keywords,
+# and track parse failures (responses that fell back to neutral).
 # ==========================
+
+# Populated during a run; cleared by run_sentiment after each model.
+_parse_failures: list = []
+
+
 def predict_sentiment_llm(backend, text: str) -> str:
     messages = [
         {"role": "system", "content": SENTIMENT_PROMPT},
         {"role": "user",   "content": text},
     ]
     raw = backend.generate(
-        messages, max_new_tokens=5, do_sample=False).lower().strip()
-    if "pos" in raw: return "positive"
-    if "neg" in raw: return "negative"
+        messages, max_new_tokens=8, do_sample=False).lower().strip()
+
+    # Strip common label prefixes the model may prepend
+    for prefix in ("label:", "ответ:", "sentiment:", "answer:", "output:"):
+        if prefix in raw:
+            raw = raw.split(prefix, 1)[-1].strip()
+
+    if "pos" in raw:    return "positive"
+    if "neg" in raw:    return "negative"
+    if "neu" in raw:    return "neutral"
+    if "позит" in raw:  return "positive"
+    if "негат" in raw:  return "negative"
+    if "нейтр" in raw:  return "neutral"
+
+    _parse_failures.append({"text": text[:80], "raw": raw})
     return "neutral"
 
 

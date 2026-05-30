@@ -48,7 +48,11 @@ def model_path(name: str) -> str:
 # RUN SETTINGS
 # ==========================
 MAX_NER_SAMPLES  = 500
-MAX_SA_SAMPLES   = 500
+MAX_SA_SAMPLES   = 1000  # increased from 500 — minimum for meaningful
+                          # 3-class comparison (1% gap = 5 samples at n=500
+                          # is noise)
+STRATIFY_SAMPLES = True   # balance classes before slicing to MAX_SA_SAMPLES
+STRATIFY_SEED    = 42     # reproducibility seed for stratified sampling
 DEVICE           = "cuda" if torch.cuda.is_available() else "cpu"
 RANDOM_SEED      = 42
 SHUFFLE_DATASET  = False
